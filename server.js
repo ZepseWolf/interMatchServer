@@ -1,12 +1,10 @@
-const path = require('path');
-const cors = require('cors');   
+const path = require('path');  
 const http = require('http');
 const bodyParser = require('body-parser');
 const express = require('express');
 const socketIO = require('socket.io');
 const {userSchema} = require('./userSchema.js');
 const  _ = require('lodash');
-const {ObjectID} = require('./mongoose');
 var request = require('request'); 
 
 const app = express();
