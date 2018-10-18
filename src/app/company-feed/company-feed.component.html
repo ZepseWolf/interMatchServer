@@ -1,0 +1,9 @@
+
+<div id="">
+  <h1>InterMatch</h1>
+  <div *ngFor="let feed of feeds$">
+    {{feed.detail.userName}}
+    <button (click)="approval(true,feed.id)">Yes</button>
+    <button (click)="approval(false,feed.id)">No</button>
+  </div>
+</div>
