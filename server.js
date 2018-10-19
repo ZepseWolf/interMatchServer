@@ -15,10 +15,10 @@ const router =  express.Router();
 const {mongoose} = require('./mongoose');
 
 
-app.use(express.static(path.join(__dirname,'dist/project')));
+app.use(express.static(path.join(__dirname)));
 app.use(bodyParser.json());
 app.get('/', (req,res)=>{
-    res.sendFile(path.join(__dirname,'dist/project/index.html'));
+    res.sendFile(path.join(__dirname,'/index.html'));
 });
 // mongoose START--------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ app.post('/post', (req,res)=>{
 });
 
 app.get('/userSchema', (req,res)=>{
-    userSchema.find().then((userSchema)=>{ 
+    Userschema.find().then((userSchema)=>{ 
         res.send({userSchema}); //website will display a success message
       },(err) =>{
           res.status(400).send(err);
