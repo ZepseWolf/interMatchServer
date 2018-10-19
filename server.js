@@ -15,10 +15,10 @@ const router =  express.Router();
 const {mongoose} = require('./mongoose');
 
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname,'dist/project')));
 app.use(bodyParser.json());
 app.get('/', (req,res)=>{
-    res.sendFile(path.join(__dirname,'/index.html'));
+    res.sendFile(path.join(__dirname,'dist/project/index.html'));
 });
 // mongoose START--------------------------------------------------------------------------
 
