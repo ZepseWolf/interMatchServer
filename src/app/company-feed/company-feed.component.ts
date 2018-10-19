@@ -43,7 +43,7 @@ var query  = [{
   styleUrls: ['./company-feed.component.css']
 })
 export class CompanyFeedComponent implements OnInit {
-  private feeds$: Object;
+  feeds$: Object;
   private temp = [] ;
   constructor(private route: ActivatedRoute) { 
     
