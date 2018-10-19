@@ -3,7 +3,7 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const express = require('express');
 const socketIO = require('socket.io');
-const {userSchema} = require('./userSchema.js');
+const {Userschema} = require('./userSchema.js');// testing
 const  _ = require('lodash');
 var request = require('request'); 
 
@@ -38,17 +38,20 @@ app.all('/auth/linkedin/callback', (req,res)=>{
 });
 // mongoose END --------------------------------------------------------------------------
 app.post('/post', (req,res)=>{
-    res.sendFile(path.join(__dirname,'dist/project/index.html'));
-    var user = new userSchema({
+    
+    var user = new Userschema({
         username : req.body.username,
         password : req.body.password,
     });
    
     user.save().then((doc)=>{
         res.send(doc);
+        
     },(e)=>{
-        res.status(400).send(e)
-    })
+        res.status(400).send(e);
+    }).catch((err)=>{
+        res.send(err);
+    });
     // UserSchema.find((err,userSchema)=>{
     //     if(err)
     //         console.log("Error : ", err);
