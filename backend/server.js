@@ -34,7 +34,7 @@ app.get('/', (req,res)=>{
 app.use('/auth/linkedin/callback', (req,res)=>{
     res.sendFile(path.join(__dirname,'dist/project/index.html'));
     console.log( JSON.stringify(res.body, undefined, 2));
-    console.log( JSON.stringify(req, undefined, 2));
+    console.log( JSON.stringify(req.body, undefined, 2));
 });
 // mongoose END --------------------------------------------------------------------------
 app.post('/register', (req,res)=>{
