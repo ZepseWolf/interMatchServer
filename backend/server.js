@@ -30,12 +30,10 @@ connection.once('open',()=>{
 app.get('/', (req,res)=>{
     res.sendFile(path.join(__dirname,'dist/project/index.html'));
 });
+
 app.all('/auth/linkedin/callback', (req,res)=>{
-    request('https://www.linkedin.com/oauth/v2/authorization', function (error, response, body) {
-        console.log('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
-    });
+    console.log( res);
+    console.log( req);
 });
 // mongoose END --------------------------------------------------------------------------
 app.post('/register', (req,res)=>{
