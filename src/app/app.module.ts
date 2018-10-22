@@ -6,6 +6,7 @@ import { ApprovalComponent } from './approval/approval.component';
 import { CompanyFeedComponent } from './company-feed/company-feed.component';
 import { EmployeeFeedComponent } from './employee-feed/employee-feed.component';
 import { RouterModule, Routes} from '@angular/router';
+import { WebsocketService } from './websocket.service';
 const routes: Routes=[
   {path: 'company', component: CompanyFeedComponent},
   {path: 'employee', component: EmployeeFeedComponent},
@@ -22,7 +23,7 @@ const routes: Routes=[
     BrowserModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [],
+  providers: [WebsocketService],
   bootstrap: [AppComponent]
   
 })

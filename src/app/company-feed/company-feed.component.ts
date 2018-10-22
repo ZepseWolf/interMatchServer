@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {Observable} from 'rxjs';
 import * as _ from 'lodash';
+import { WebsocketService } from '../websocket.service';
 
 
 var user  = {
@@ -45,8 +46,8 @@ var query  = [{
 export class CompanyFeedComponent implements OnInit {
   feeds$: Object;
   private temp = [] ;
-  constructor(private route: ActivatedRoute) { 
-    
+  constructor(private route: ActivatedRoute,private ws: WebsocketService) { 
+  
   }
   observer = {
     next : function(value)  {
@@ -56,7 +57,14 @@ export class CompanyFeedComponent implements OnInit {
       console.log(error); 
     }
   }
-  ngOnInit() {
+  ngOnInit():void{
+    this.ws.initSocket();
+    this.ws.onApproval()
+    .subscribe((approve: boolean) => {
+      //asyn function to wait for message sent before displaying this.Hence the subscribe
+      // this.approve = approve ;
+      console.log("Application has been ", approve);
+    });
     
     Observable.create((obs)=>{
       obs.next(
@@ -64,10 +72,10 @@ export class CompanyFeedComponent implements OnInit {
           //get only 10 to prevent too much memory usage
           if (index < 10 ){
             this.temp.push(item);
-            console.log(item, index);
+           
           }
         })
-      ),2000
+      )
     })
     .subscribe(this.feeds$ = this.temp);
 
@@ -78,6 +86,7 @@ export class CompanyFeedComponent implements OnInit {
    var t =  _.find(this.temp ,{id: id}, _.map(this.temp,  stateItem => {
     stateItem.approve = approve;
    }));
+   this.ws.approval(approve);
     console.log(t);
     console.log('Sending to socket service',approve);
     // this.messageContent = null;

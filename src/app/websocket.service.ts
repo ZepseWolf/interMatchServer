@@ -14,6 +14,7 @@ export class WebsocketService {
 
   public initSocket(): void {
     this.socket = io();
+    console.log('sockeet started')
   } 
   
   public onApproval(): Observable<boolean> {
@@ -29,8 +30,5 @@ export class WebsocketService {
     //excuter to approve
     public approval(approve: boolean): void {
         this.socket.emit('approval', approve);
-
     }
-
-
 }
