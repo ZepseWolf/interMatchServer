@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import {WastsonApiService} from '../wastson-api.service'
 @Component({
   selector: 'app-employee-feed',
   templateUrl: './employee-feed.component.html',
@@ -7,9 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EmployeeFeedComponent implements OnInit {
 
-  constructor() { }
+  constructor(private watson: WastsonApiService) { }
 
   ngOnInit() {
+    // this.watson.getTest();
   }
 
 }

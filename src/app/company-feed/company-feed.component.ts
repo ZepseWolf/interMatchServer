@@ -49,15 +49,8 @@ export class CompanyFeedComponent implements OnInit {
   constructor(private route: ActivatedRoute,private ws: WebsocketService) { 
   
   }
-  observer = {
-    next : function(value)  {
-      console.log(value);
-    },
-    error : function(error){
-      console.log(error); 
-    }
-  }
-  ngOnInit():void{
+  
+  ngOnInit(): void{
     this.ws.initSocket();
     this.ws.onApproval()
     .subscribe((approve: boolean) => {
@@ -72,7 +65,6 @@ export class CompanyFeedComponent implements OnInit {
           //get only 10 to prevent too much memory usage
           if (index < 10 ){
             this.temp.push(item);
-           
           }
         })
       )

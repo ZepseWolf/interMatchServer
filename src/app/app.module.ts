@@ -8,9 +8,9 @@ import { EmployeeFeedComponent } from './employee-feed/employee-feed.component';
 import { RouterModule, Routes} from '@angular/router';
 import { WebsocketService } from './websocket.service';
 const routes: Routes=[
-  {path: 'company', component: CompanyFeedComponent},
-  {path: 'employee', component: EmployeeFeedComponent},
-  {path: '', redirectTo: 'company', pathMatch:'full'}
+  {path: '/company', component: CompanyFeedComponent},
+  {path: '/employee', component: EmployeeFeedComponent},
+  {path: '', redirectTo: '/company', pathMatch:'full'}
 ];
 @NgModule({
   declarations: [

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable } from 'rxjs';
 import { Observer } from 'rxjs';
-import { environment } from '../environments/environment'
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,7 @@ export class WebsocketService {
 
   public initSocket(): void {
     this.socket = io();
-    console.log('sockeet started')
+    console.log('sockeet started');
   } 
   
   public onApproval(): Observable<boolean> {
