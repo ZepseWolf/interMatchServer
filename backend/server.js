@@ -175,6 +175,8 @@ app.patch('/feed/:id', (req,res)=>{
                             // res.write("sadsad");
                             console.log(listArr)
                             if(listArr === undefined || listArr.length == 0){
+                                // add array together
+                                listArr.concat(employeeData.potentional_jobs[i])
                                 for(var i = 0; i<listArr.length;i++){
                                     Promise.all([updateEmployee(jobList._id,jobList.company_id,employeeData._id),updateCompany(jobList._id,jobList.company_id,employeeData._id)])
                                     .then(data =>{
