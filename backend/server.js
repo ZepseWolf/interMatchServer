@@ -81,23 +81,39 @@ app.post('/register', (req,res)=>{
     });
 
 });
-app.get('/feed/:id', (req,res)=>{
+app.patch('/feed/:id', (req,res)=>{
     // only display this when it skip first login
     var id = req.params.id;
     var obj;
     var userObj; 
+    function updateEmployee(jobID,companyID,employeeID){
+        return EmployeeSchema.findOneAndUpdate({_id:employeeID },{$push :  {
+            potentional_jobs: {
+                job_id: jobID,
+                company_id: companyID
+            } 
+        }});
+    };
+    function updateCompany(jobID,companyID,employeeID){
+        CompanySchema.findOneAndUpdate({_id:companyID},{$push :  {
+            potential_employee:{
+                employee_id: employeeID,
+                job_id: jobID
+            } 
+        }});
+    };
     UserSchema.findById({_id:id}).then((x)=>{
          obj =  x; 
     },(err) =>{
         res.status(400).send(err);
     }).then( ()=>{
         if( obj.user_type == "Employee"){
-            EmployeeSchema.findById({_id:id}).then((employeeSchema)=>{ 
+            EmployeeSchema.findById({_id:id}).then((employeeData)=>{ 
                 //TODO 3. matching here
-                var matchingCriteria = _.pick(employeeSchema,['trait_needs']);
+                var matchingCriteria = _.pick(employeeData,['trait_needs']);
                 //var matchingCriteria = { trait_needs: [{"trait_name":"Structursdae","trait_rank":1},{"trait_name":"Curiosity","trait_rank":2},{"trait_name":"Stability","trait_rank":3},{"trait_name":"Practicality","trait_rank":4},{"trait_name":"Challenge","trait_rank":5}] };
-                console.log(matchingCriteria);
                 
+                var count = 0;
                 JobSchema.find({
                     $or : matchingCriteria.trait_needs.map(function(objOfTraits){
                         var obj = {};
@@ -106,12 +122,14 @@ app.get('/feed/:id', (req,res)=>{
                     })
                 }).then((yourcompanywhowantsyou)=>{         
                     var listArr = [];
-                    yourcompanywhowantsyou.forEach(jobList => {  
-                        var sum = 0;
-                        var ylen = jobList.require_trait_needs.length;
-                        var xlen = matchingCriteria.trait_needs.length;
-                        for(var y= 0 ;y <jobList.require_trait_needs.length; y++ ){
-                            if (sum < 44){
+                
+                    var sum = 0 ;
+                    
+                        yourcompanywhowantsyou.forEach(jobList => {  
+                            var v = true;
+                            var ylen = jobList.require_trait_needs.length;
+                            var xlen = matchingCriteria.trait_needs.length;
+                            for(var y= 0 ;y <jobList.require_trait_needs.length; y++ ){
                                 for(var x= 0 ;x <matchingCriteria.trait_needs.length; x++ ){
                                     
                                     if(matchingCriteria.trait_needs[x].trait_name == jobList.require_trait_needs[y].trait_name){
@@ -119,26 +137,56 @@ app.get('/feed/:id', (req,res)=>{
                                         var currentXRank = matchingCriteria.trait_needs[x].trait_rank;
                                         // y for company , x is for employee 
                                         // why five because the trait of the employees which i used
-                                        // watson api to find hence is a fixed amount at 5. 
-                                        // This below is caculating the need model. 
-                                        // It work by rank 1's weight = 3 of 
-                                        sum += ((1+ylen)-currentYRank)/(((ylen * ylen) + ylen)/2)* (currentXRank/5) 
-                                        
-                                       sum = jobList.require_trait_needs.length/100*(1+jobList.require_trait_needs.length-jobList.require_trait_needs[y].trait_rank) * 6-matchingCriteria.trait_needs[x].trait_rank;
-                                       if (sum > 44){
-                                        listArr.push(jobList.company_id);
-                                       }
+                                        // watson api to find hence is a fixed amount at 5 and the percentage balancer is (5+1-ylen) /15. 
+                                        // This below is caculating the need model.
+                                       
+                                        console.log("X :" ,currentXRank,' Y :',currentYRank);
+                                        sum += ((1+ylen)-currentYRank)/(((ylen * ylen) + ylen)/2)* ((1+xlen-currentXRank)/5)/(((6-ylen)/15)+(10/15));
+                                    }  
+                                } 
+                                
+                            }
+                            if (sum >0.69 ){                                  
+                                console.log("More then 69%!",jobList._id," is a ",Math.round(sum*100) ,"% matched!");                
+                                for(var i = 0 ; i<employeeData.potentional_jobs.length;i++){
+                                    // loop database's p job for now = 4
+                                    if(employeeData.potentional_jobs[i].job_id == jobList._id && employeeData.potentional_jobs[i].company_id ==jobList.company_id){
+                                         v = false
                                     }
                                 }
-                            } 
-                            
-                        }
-
-                        
-                    });
-                    res.send({yourcompanywhowantsyou});
+                                if (v){
+                                    
+                                    listArr.push({
+                                        job_id: jobList._id,
+                                        company_id: jobList.company_id,
+                                        employee_id: employeeData._id,
+                                    })
+                                //    updateEmployee(jobList._id,jobList.company_id,employeeData._id);
+                                }
+                                // console.log(_.xorWith(tempSuccess,employeeData.potentional_jobs, _.isNotEqual));
+                                    
+                                // 
+                                sum = 0;
+                            }
+                            else if (sum < 0.69 ){
+                                console.log('No match')
+                                sum = 0;
+                            }
+                            // res.write("sadsad");
+                            console.log(listArr)
+                            if(listArr === undefined || listArr.length == 0){
+                                for(var i = 0; i<listArr.length;i++){
+                                    Promise.all([updateEmployee(jobList._id,jobList.company_id,employeeData._id),updateCompany(jobList._id,jobList.company_id,employeeData._id)])
+                                    .then(data =>{
+                                        listArr.data
+                                    });
+                                }
+                                
+                            }
+                           
+                        });
                 });
-                //res.send({employeeSchema}); //website will reply a json for front end to use
+                //res.send({employeeData}); //website will reply a json for front end to use
             },(err) =>{
                 res.status(400).send(err);
             });
@@ -190,6 +238,7 @@ app.get('/jobposting/:id',(req,res)=>{
 app.post('/jobposting/add/:id',(req,res)=>{
     //how to use >> /jobposting/add/_id < company id
         var job = new JobSchema({
+            _id: ObjectID.createPk(),
             title: req.body.title,
             description: req.body.description,
             start_date: req.body.start_date,
@@ -365,7 +414,7 @@ server.listen(port,()=>{
 
 });
 
-/* Grave yard
+/* Grave yard   
 app.get('/', (req,res)=>{
     res.sendFile(path.join(__dirname,'dist/project/index.html'));
 });
@@ -376,4 +425,25 @@ app.use('/auth/linkedin/callback', (req,res)=>{
     console.log( JSON.stringify(res.body, undefined, 2));
     console.log( JSON.stringify(req.body, undefined, 2));
 });
+
+function updateEmployee(jobID,companyID,employeeID){
+        EmployeeSchema.findOneAndUpdate({_id:employeeData._id },{$push :  {
+            potentional_jobs: {
+                job_id: jobList._id,
+                company_id: jobList.company_id
+            } 
+        }}).then(data=>{
+            console.log("how many time?");
+        });
+    };
+    function updateCompany(){
+        CompanySchema.findOneAndUpdate({_id:jobList.company_id},{$push :  {
+            potential_employee:{
+                employee_id: employeeData._id,
+                job_id: jobList._id
+            } 
+        }}).then(data=>{
+            console.log("company", data);
+        });
+    };
 */

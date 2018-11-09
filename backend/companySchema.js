@@ -1,5 +1,4 @@
 const mongoose = require('mongoose') ;
-const {ObjectID}  = require('mongodb');
 
 
 var CompanySchema = mongoose.model('CompanySchema',{// the text here are use to target specific collection /*RULE MSUT END WITH S ,ALL SMALL CAP
@@ -28,7 +27,7 @@ var CompanySchema = mongoose.model('CompanySchema',{// the text here are use to 
     },
     //Embedded sub-document Start
     potential_employee:[{
-        //we make this using our algorith
+        //we make this using our model
         _id: { 
             type: String,
             required : false

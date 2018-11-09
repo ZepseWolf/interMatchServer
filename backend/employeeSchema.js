@@ -3,7 +3,8 @@ const {ObjectID}  = require('mongodb');
 
 var EmployeeSchema = mongoose.model('EmployeeSchema',{// the text here are use to target specific collection /*RULE MSUT END WITH S ,ALL SMALL CAP
     _id: { 
-        type: String
+        type: String,
+        required : true
     },
     user_type: {
         type: String,
