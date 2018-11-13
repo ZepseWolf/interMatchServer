@@ -26,7 +26,7 @@ var EmployeeSchema = mongoose.model('EmployeeSchema',{// the text here are use t
         },
         content: String,
         created : {    
-            type: String,
+            type: Number,
             default:Date.now()
         }
     }],
@@ -52,20 +52,7 @@ var EmployeeSchema = mongoose.model('EmployeeSchema',{// the text here are use t
             type: String
         },
     }],
-    potentional_jobs:[{
-        _id: { 
-            type: String,
-            required : false
-        },
-        company_id : {
-            type: String
-        },
-        matched_date : {
-            type: String,
-            default:Date.now()
-        },
-        job_id: String
-    }],
+    potentional_jobs:Array ,
     education:[{
         _id: { 
             type: String,

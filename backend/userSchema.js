@@ -23,7 +23,7 @@ var UserSchema = mongoose.model('UserSchema',{// the text here are use to target
         required : true
     },
     creation_dt: {
-        type: String,
+        type: Number,
         default: Date.now()
     },
     num_of_login: {
